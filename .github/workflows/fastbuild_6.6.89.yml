@@ -567,7 +567,7 @@ jobs:
           echo "CONFIG_USER_NS=y" >> ./common/arch/arm64/configs/gki_defconfig
           # 修复 devtmpfs support
           echo "CONFIG_DEVTMPFS=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_DEVTMPFS_MOUNT=y" >> ./common/arch/arm64/configs/gki_defconfig
+          #           echo "CONFIG_DEVTMPFS_MOUNT=y" >> ./common/arch/arm64/configs/gki_defconfig
           # 修复 cgroup devices support
           echo "CONFIG_CGROUPS=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_CGROUP_DEVICE=y" >> ./common/arch/arm64/configs/gki_defconfig
