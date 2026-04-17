@@ -552,6 +552,10 @@ jobs:
           patch -p1 < ../superkernel.diff || true
           # 追加 fulldocker 配置
           cat ../defconfig_append >> ./arch/arm64/configs/gki_defconfig
+          # 补充 DroidSpaces 缺失的必要配置
+          echo "CONFIG_NAMESPACES=y" >> ./arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IPC_NS=y" >> ./arch/arm64/configs/gki_defconfig
+          echo "CONFIG_UTS_NS=y" >> ./arch/arm64/configs/gki_defconfig
       - name: 构建内核
         run: |
           WORKDIR="$(pwd)"
