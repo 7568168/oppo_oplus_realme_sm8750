@@ -551,9 +551,7 @@ jobs:
           # patch -p1 < unicode-bypass_fix_5.10-6.12通用.patch
           patch -p1 -N -F 3 < 'superkernel.diff'
           cd ../
-		  
           # 修复 PID namespace 和 IPC namespace
-          
           echo "CONFIG_CMDLINE="console=ttynull stack_depot_disable=on cgroup_disable=pressure kasan.stacktrace=off kvm-arm.mode=protected bootconfig cgroup_no_v1=cpu,cpuset,io,memory"" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_PID_NS=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_SYSVIPC=y" >> ./common/arch/arm64/configs/gki_defconfig
@@ -747,8 +745,7 @@ jobs:
           echo "CONFIG_IPVLAN=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_IPVTAP=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_L2TP=y" >> ./common/arch/arm64/configs/gki_defconfig
-		  
-		  
+
       - name: 构建内核
         run: |
           WORKDIR="$(pwd)"
