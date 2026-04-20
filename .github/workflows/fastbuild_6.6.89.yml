@@ -546,35 +546,209 @@ jobs:
       - name: 注入DroidSpaces内核配置
         run: |
           cd kernel_workspace/common
-          wget https://raw.githubusercontent.com/Goldzxcbug/Kernel_patch/refs/heads/main/Droidspaces/01.6.1+_disable_crc_checks_for_lkms.patch
-          wget https://raw.githubusercontent.com/Goldzxcbug/Kernel_patch/refs/heads/main/Droidspaces/02.fix_restore%20cgroup%20file%20prefix%20handling%20.patch
-          wget https://raw.githubusercontent.com/Goldzxcbug/Kernel_patch/refs/heads/main/Droidspaces/03.5.15+_use_android_abi_padding_for_posix_mqueue.patch
-          wget https://raw.githubusercontent.com/Goldzxcbug/Kernel_patch/refs/heads/main/Droidspaces/04.use_android_abi_padding_for_sysvipc_task_struct.patch
-          wget https://raw.githubusercontent.com/7568168/Unicode_bypass_Fix/refs/heads/main/unicode-bypass_fix_5.10-6.12%E9%80%9A%E7%94%A8.patch
-          patch -p1 < unicode-bypass_fix_5.10-6.12通用.patch
-          patch -p1 -N -F 3 < '01.6.1+_disable_crc_checks_for_lkms.patch'
-          patch -p1 -N -F 3 < '02.fix_restore cgroup file prefix handling .patch'
-          patch -p1 -N -F 3 < '03.5.15+_use_android_abi_padding_for_posix_mqueue.patch'
-          patch -p1 -N -F 3 < '04.use_android_abi_padding_for_sysvipc_task_struct.patch'
+          wget https://github.com/cctv18/kernel-workshop/raw/refs/heads/main/patch/fulldocker/superkernel.diff
+          # wget https://raw.githubusercontent.com/7568168/Unicode_bypass_Fix/refs/heads/main/unicode-bypass_fix_5.10-6.12%E9%80%9A%E7%94%A8.patch
+          # patch -p1 < unicode-bypass_fix_5.10-6.12通用.patch
+          patch -p1 -N -F 3 < 'superkernel.diff'
           cd ../
+		  
           # 修复 PID namespace 和 IPC namespace
-          echo "CONFIG_SYSCTL=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_SYSVIPC=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_POSIX_MQUEUE=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_NAMESPACES=y" >> ./common/arch/arm64/configs/gki_defconfig
+          
+          echo "CONFIG_CMDLINE="console=ttynull stack_depot_disable=on cgroup_disable=pressure kasan.stacktrace=off kvm-arm.mode=protected bootconfig cgroup_no_v1=cpu,cpuset,io,memory"" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_PID_NS=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_IPC_NS=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_UTS_NS=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_USER_NS=y" >> ./common/arch/arm64/configs/gki_defconfig
-          # 修复 devtmpfs support
+          echo "CONFIG_SYSVIPC=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_DEVTMPFS=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_DEVTMPFS_MOUNT=y" >> ./common/arch/arm64/configs/gki_defconfig
-          # 修复 cgroup devices support
-          echo "CONFIG_CGROUPS=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_CGROUP_DEVICE=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_POSIX_MQUEUE=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_USER_NS=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_BRIDGE_NETFILTER=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NF_TABLES=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NF_TABLES_INET=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NF_TABLES_NETDEV=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NFT_NUMGEN=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NFT_CT=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NFT_CONNLIMIT=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NFT_LIMIT=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NFT_MASQ=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NFT_REDIR=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NFT_TUNNEL=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NFT_QUEUE=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NFT_QUOTA=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NFT_REJECT=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NFT_COMPAT=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NFT_HASH=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NFT_XFRM=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NFT_SOCKET=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NFT_OSF=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NFT_TPROXY=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NFT_SYNPROXY=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NF_TABLES_IPV4=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NF_TABLES_ARP=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NF_TABLES_IPV6=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NF_TABLES_BRIDGE=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NFT_BRIDGE_REJECT=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NFT_NAT=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NFT_FIB=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NFT_FIB_IPV4=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NFT_FIB_IPV6=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_VXLAN=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_BRIDGE_VLAN_FILTERING=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP_NF_MATCH_AH=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP_NF_TARGET_SYNPROXY=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP_NF_TARGET_ECN=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP_NF_TARGET_TTL=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NETFILTER_XT_MATCH_RECENT=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_BLK_DEV_THROTTLING=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_BTRFS_FS=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_BTRFS_FS_POSIX_ACL=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP_VS=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP_SCTP=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NETFILTER_XT_MATCH_IPVS=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP_VS_IPV6=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP_VS_PROTO_TCP=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP_VS_PROTO_UDP=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP_VS_PROTO_SCTP=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP_VS_PROTO_ESP=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP_VS_PROTO_AH=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP_VS_RR=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP_VS_WRR=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP_VS_LC=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP_VS_WLC=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP_VS_FO=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP_VS_OVF=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP_VS_LBLC=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP_VS_LBLCR=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP_VS_DH=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP_VS_SH=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP_VS_SED=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP_VS_NQ=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP_VS_TWOS=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP_VS_MH=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP_VS_NFCT=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_CGROUP_MISC=y" >> ./common/arch/arm64/configs/gki_defconfig
           echo "CONFIG_CGROUP_PIDS=y" >> ./common/arch/arm64/configs/gki_defconfig
-          echo "CONFIG_MEMCG=y" >> ./common/arch/arm64/configs/gki_defconfig
-                            
+          echo "CONFIG_CGROUP_DEVICE=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_CGROUP_PERF=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NET_SCH_HFSC=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NET_SCH_RED=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NET_SCH_SFB=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NET_SCH_TEQL=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NET_SCH_CBS=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NET_SCH_ETF=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NET_SCH_TAPRIO=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NET_SCH_GRED=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NET_SCH_DRR=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NET_SCH_MQPRIO=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NET_SCH_SKBPRIO=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NET_SCH_CHOKE=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NET_SCH_QFQ=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NET_SCH_CAKE=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NET_SCH_HHF=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NET_SCH_PIE=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NET_SCH_PLUG=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NET_SCH_ETS=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NET_SCH_DEFAULT=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NET_SCH_FQ_PIE=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_ZRAM_BACKEND_ZSTD=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_ZRAM_BACKEND_DEFLATE=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NFT_LOG=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NFT_FIB_INET=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NF_DUP_NETDEV=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NFT_DUP_NETDEV=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NFT_FWD_NETDEV=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NFT_FIB_NETDEV=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NFT_REJECT_NETDEV=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NETFILTER_XTABLES_COMPAT=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NETFILTER_XT_TARGET_AUDIT=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NETFILTER_XT_TARGET_CHECKSUM=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NETFILTER_XT_TARGET_HMARK=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NETFILTER_XT_TARGET_LED=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NETFILTER_XT_TARGET_RATEEST=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NETFILTER_XT_TARGET_TCPOPTSTRIP=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP_VS_FTP=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NETFILTER_NETLINK_HOOK=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NETFILTER_NETLINK_ACCT=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NF_CONNTRACK_ZONES=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NF_CONNTRACK_SNMP=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NF_CONNTRACK_SIP=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NETFILTER_NETLINK_GLUE_CT=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NFT_DUP_IPV4=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NF_LOG_ARP=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NF_LOG_IPV4=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP_VS_PE_SIP=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NFT_DUP_IPV6=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP6_NF_MATCH_AH=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP6_NF_MATCH_EUI64=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP6_NF_MATCH_FRAG=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP6_NF_MATCH_OPTS=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP6_NF_MATCH_HL=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP6_NF_MATCH_IPV6HEADER=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP6_NF_MATCH_MH=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP6_NF_MATCH_RT=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP6_NF_MATCH_SRH=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP6_NF_TARGET_HL=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP6_NF_TARGET_SYNPROXY=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP6_NF_SECURITY=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP6_NF_TARGET_NPT=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_L2TP_V3=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NFT_BRIDGE_META=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NF_CONNTRACK_BRIDGE=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_BRIDGE_NF_EBTABLES=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP_DCCP=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP_DCCP_CCID3=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IP_DCCP_TFRC_LIB=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_BRIDGE_EBT_BROUTE=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_BRIDGE_EBT_T_FILTER=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_BRIDGE_EBT_T_NAT=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_BRIDGE_EBT_802_3=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_BRIDGE_EBT_AMONG=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_BRIDGE_EBT_ARP=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_BRIDGE_EBT_IP=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_BRIDGE_EBT_IP6=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_BRIDGE_EBT_LIMIT=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_BRIDGE_EBT_MARK=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_BRIDGE_EBT_PKTTYPE=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_BRIDGE_EBT_STP=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_BRIDGE_EBT_VLAN=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_BRIDGE_EBT_ARPREPLY=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_BRIDGE_EBT_DNAT=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_BRIDGE_EBT_MARK_T=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_BRIDGE_EBT_REDIRECT=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_BRIDGE_EBT_SNAT=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_BRIDGE_EBT_LOG=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_BRIDGE_EBT_NFLOG=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_L2TP_IP=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_L2TP_ETH=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NETFILTER_XT_MATCH_CGROUP=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NETFILTER_XT_MATCH_CLUSTER=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NF_CONNTRACK_ZONES=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NETFILTER_XT_MATCH_CPU=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NETFILTER_XT_MATCH_DEVGROUP=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NETFILTER_XT_MATCH_IPCOMP=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NETFILTER_XT_MATCH_NFACCT=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NETFILTER_XT_MATCH_OSF=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NETFILTER_XT_MATCH_PHYSDEV=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NETFILTER_XT_MATCH_RATEEST=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NETFILTER_XT_MATCH_REALM=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NETFILTER_XT_MATCH_TCPMSS=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_CEPH_FS=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_CEPH_FS_POSIX_ACL=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_CEPH_FS_SECURITY_LABEL=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_CEPH_FSCACHE=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_CEPH_LIB=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_CEPH_LIB_USE_DNS_RESOLVER=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NF_CT_NETLINK_HELPER=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_FHANDLE=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_UNIX_DIAG=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_PACKET_DIAG=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_NETLINK_DIAG=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_CHECKPOINT_RESTORE=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_MACVLAN=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_MACVTAP=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IPVLAN=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_IPVTAP=y" >> ./common/arch/arm64/configs/gki_defconfig
+          echo "CONFIG_L2TP=y" >> ./common/arch/arm64/configs/gki_defconfig
+		  
+		  
       - name: 构建内核
         run: |
           WORKDIR="$(pwd)"
